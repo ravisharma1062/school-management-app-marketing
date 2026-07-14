@@ -32,8 +32,8 @@ export function HomePage() {
             on web and Android.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/request-account">
-              <Button size="lg">Request an account</Button>
+            <Link to="/start-trial">
+              <Button size="lg">Start free trial</Button>
             </Link>
             <Link to="/pricing">
               <Button variant="secondary" size="lg">
@@ -41,6 +41,13 @@ export function HomePage() {
               </Button>
             </Link>
           </div>
+          <p className="mt-4 text-xs text-slate-500">
+            14 days, no card required. Prefer a guided setup?{' '}
+            <Link to="/request-account" className="font-semibold text-brand-600 hover:underline">
+              Request an account
+            </Link>{' '}
+            instead.
+          </p>
         </div>
       </section>
 
