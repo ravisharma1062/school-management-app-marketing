@@ -8,6 +8,13 @@ export function PricingPage() {
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="text-gradient text-3xl font-extrabold tracking-tight sm:text-4xl">Simple, transparent pricing</h1>
         <p className="mt-3 text-slate-600">Pick a plan to start with — you can change it any time; just ask us.</p>
+        <p className="mt-3 text-sm text-slate-500">
+          Not sure yet?{' '}
+          <Link to="/start-trial" className="font-semibold text-brand-600 hover:underline">
+            Start a free 14-day trial
+          </Link>{' '}
+          on the Basic plan, no card required.
+        </p>
       </div>
 
       <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3">
