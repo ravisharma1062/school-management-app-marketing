@@ -6,11 +6,15 @@ deployable from both the school-facing app (`school-management-app-ui`) and the 
 
 ## What it does
 
-- Home page describing the product and its features.
+- Home page describing the product and its features — hero CTA leads with **"Start free trial"**.
 - Pricing page sourced from the three seeded plans (Basic/Standard/Premium) — keep `src/data/plans.ts` in sync
   with the backend's `PlanDefaults.java` / `V18` seed migration if either changes.
-- "Request an account" form → `POST /api/v1/public/signup-requests` on the backend, protected by Cloudflare
-  Turnstile and rate-limited server-side. Submissions land directly in the operator console's signup queue.
+- Two distinct signup paths, both CAPTCHA-protected and rate-limited server-side:
+  - **`/start-trial`** (`TrialSignupPage.tsx`) → `POST /api/v1/public/trial-signups` — provisions a real `TRIAL`
+    school **immediately**, no operator review, always on the Basic plan. Success screen says the trial is live.
+  - **`/request-account`** (`SignupPage.tsx`) → `POST /api/v1/public/signup-requests` — lands in the operator
+    console's signup queue for manual review/approval instead of instant provisioning. Success screen says
+    "we'll be in touch."
 
 ## CAPTCHA is dev-ready, not yet live
 
