@@ -4,6 +4,8 @@ Public marketing site for the School Management App — the only fully public-fa
 
 **Sibling repos** (same backend, different clients — not shared code, not in this repo): `school-management-app-backen` (the API), `school-management-app-ui` (tenant-facing web), `school-management-app-android` (tenant-facing mobile), `school-management-app-operator` (internal platform-team console). Backend DTOs are hand-mirrored here in `src/types/index.ts` with no shared schema/codegen.
 
+**If you're editing `src/types/index.ts` or `src/data/plans.ts` because a backend DTO/plan changed:** this repo's scope is narrow — only `PublicSignupRequest`, `PublicTrialSignupRequest`, and plan pricing shape. It never needs the core school-domain or platform-console DTOs the other clients carry (see backend's `CLAUDE.md` "Cross-repo checklist" for the full breakdown).
+
 ## What it does
 
 - Home page describing the product and its features — hero CTA leads with **"Start free trial"**.
