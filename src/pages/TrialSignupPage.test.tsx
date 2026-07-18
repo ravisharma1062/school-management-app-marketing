@@ -119,9 +119,11 @@ describe('TrialSignupPage submission', () => {
 });
 
 describe('TrialSignupPage error handling', () => {
-  it('shows the existing-account message on a 409 instead of crashing', async () => {
+  it('shows the existing-account message on a 409 with the DUPLICATE_SIGNUP_EMAIL code', async () => {
     const user = userEvent.setup();
-    mockedSubmit.mockRejectedValueOnce(axiosErrorWithResponse(409, { message: 'Account already exists' }));
+    mockedSubmit.mockRejectedValueOnce(
+      axiosErrorWithResponse(409, { message: 'Account already exists', code: 'DUPLICATE_SIGNUP_EMAIL' }),
+    );
     render(<TrialSignupPage />);
 
     await fillRequiredFields(user);

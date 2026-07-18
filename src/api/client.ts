@@ -17,8 +17,16 @@ export function extractErrorMessage(error: unknown, fallback = 'Something went w
   return fallback;
 }
 
+/**
+ * Specifically an email already having an account/pending request — not just any 409. The
+ * backend's generic DataIntegrityViolationException handler also returns 409 for unrelated
+ * conflicts (e.g. a school-name/slug collision), so status alone can't distinguish them; only
+ * the real email-duplicate paths set this code.
+ */
 export function isDuplicateSignupError(error: unknown): boolean {
-  return axios.isAxiosError(error) && error.response?.status === 409;
+  if (!axios.isAxiosError(error) || error.response?.status !== 409) return false;
+  const data = error.response.data as { code?: string } | undefined;
+  return data?.code === 'DUPLICATE_SIGNUP_EMAIL';
 }
 
 export function isRateLimitError(error: unknown): boolean {

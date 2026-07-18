@@ -59,8 +59,17 @@ describe('extractErrorMessage', () => {
 });
 
 describe('isDuplicateSignupError', () => {
-  it('is true for an axios 409', () => {
-    expect(isDuplicateSignupError(axiosErrorWithResponse(409, { message: 'duplicate' }))).toBe(true);
+  it('is true for a 409 with the DUPLICATE_SIGNUP_EMAIL code', () => {
+    const err = axiosErrorWithResponse(409, { message: 'duplicate', code: 'DUPLICATE_SIGNUP_EMAIL' });
+    expect(isDuplicateSignupError(err)).toBe(true);
+  });
+
+  // The backend's generic constraint-violation handler also returns 409 for unrelated conflicts
+  // (e.g. a school-name/slug collision) with no code — status alone must not be enough, or those
+  // get mislabeled as "you already have a pending request" when they're a different error entirely.
+  it('is false for a 409 with no code, or a different code', () => {
+    expect(isDuplicateSignupError(axiosErrorWithResponse(409, { message: 'name conflict' }))).toBe(false);
+    expect(isDuplicateSignupError(axiosErrorWithResponse(409, { code: 'SOME_OTHER_CODE' }))).toBe(false);
   });
 
   it('is false for other statuses', () => {

@@ -146,9 +146,11 @@ describe('SignupPage submission', () => {
 });
 
 describe('SignupPage error handling', () => {
-  it('shows the duplicate-request message on a 409 instead of crashing', async () => {
+  it('shows the duplicate-request message on a 409 with the DUPLICATE_SIGNUP_EMAIL code', async () => {
     const user = userEvent.setup();
-    mockedSubmit.mockRejectedValueOnce(axiosErrorWithResponse(409, { message: 'Signup request already pending' }));
+    mockedSubmit.mockRejectedValueOnce(
+      axiosErrorWithResponse(409, { message: 'Signup request already pending', code: 'DUPLICATE_SIGNUP_EMAIL' }),
+    );
     renderPage();
 
     await fillRequiredFields(user);
@@ -159,6 +161,25 @@ describe('SignupPage error handling', () => {
     // The form stays up so the user can adjust and retry.
     expect(screen.getByRole('button', { name: /Submit request/i })).toBeEnabled();
     expect(screen.queryByRole('heading', { name: /Request received/i })).not.toBeInTheDocument();
+  });
+
+  // A 409 can also mean an unrelated conflict (e.g. a school-name/slug collision) that the
+  // backend's generic constraint-violation handler also reports as 409 but without this code —
+  // showing the fixed "already pending" copy for that case would be actively misleading, since
+  // the user's email isn't a duplicate at all. It should fall through to the backend's real message.
+  it('shows the backend\'s actual message for a 409 without the duplicate-email code', async () => {
+    const user = userEvent.setup();
+    mockedSubmit.mockRejectedValueOnce(
+      axiosErrorWithResponse(409, { message: 'A school with a very similar name was just registered. Please try again in a moment.' }),
+    );
+    renderPage();
+
+    await fillRequiredFields(user);
+    await user.click(screen.getByRole('button', { name: /Submit request/i }));
+
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent('A school with a very similar name was just registered. Please try again in a moment.');
+    expect(alert).not.toHaveTextContent(/already got a request pending review/i);
   });
 
   it('shows the rate-limit message on a 429', async () => {
